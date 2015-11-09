@@ -129,8 +129,27 @@ router.post('/user', (req, res) => {
   }
   else{
     //TODO: grab the form variables, test existence, redirect if failure
-
-    //TODO: 
+    var name, pass, admin;
+    name = req.body.name;
+    pass = req.body.pass;
+    admin = req.body.admin;
+    if (!name || !pass || !admin){
+      req.flash('list', 'Unable to create user, missing input.');
+      res.redirect('/admin/list');
+    }
+    //TODO: create a new user, flash message to list (error or not)
+    else{
+      model.add({name, pass, admin}, function(error, newuser) {
+        if(error) {
+          req.flash('list', error);
+          res.redirect('/admin/list');
+        }
+        else{
+          req.flash('list', 'User created successfully.');
+          res.redirect('/admin/list');
+        }
+      });
+    }
   }
 
 });
