@@ -137,9 +137,11 @@ router.post('/user', (req, res) => {
       req.flash('list', 'Unable to create user, missing input.');
       res.redirect('/admin/list');
     }
+    
     //TODO: create a new user, flash message to list (error or not)
     else{
-      model.add({name, pass, admin}, function(error, newuser) {
+      var user = {name, pass, admin};
+      model.add(user, function(error, newuser) {
         if(error) {
           req.flash('list', error);
           res.redirect('/admin/list');
