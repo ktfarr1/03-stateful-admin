@@ -38,8 +38,41 @@ router.get('/list', (req, res) => {
   //  You will be graded on each of the above items.
 
   // Replace below with your own implementation.
-  req.flash('main', '/admin/list is not implemented!');
-  res.redirect('/user/main');
+  // req.flash('main', '/admin/list is not implemented!');
+  // res.redirect('/user/main');
+
+  var user = req.session.user;
+  if(!user) {
+    req.flash('login', 'Not logged in');
+    res.redirect('/user/login');
+  }
+  else if (user && !online[user.name]) {
+    req.flash('login', 'Login Expired');
+    delete req.session.user;
+    res.redirect('/user/login')
+  }
+  else if(!user.admin){
+    req.flash('main', 'User is not an Administrator.');
+    res.redirect('/user/main')
+  }
+  else{
+    var message = req.flash('list') || '';
+    var users = {};
+    model.list( function(error, data) {
+      if (error) {
+        // Pass a message to main:
+        req.flash('main', error);
+        res.redirect('/user/main');
+      }
+      else {
+        users = data;
+      }
+    });
+    res.render('user-list', { 
+      message: message,
+      users: users
+    })
+  }
 });
 
 router.post('/user', (req, res) => {
@@ -77,8 +110,29 @@ router.post('/user', (req, res) => {
   //  You will be graded on each of the above items.
 
   // Replace below with your implementation.
-  req.flash('main', '/admin/user is not implemented!');
-  res.redirect('/user/main');
+  // req.flash('main', '/admin/user is not implemented!');
+  // res.redirect('/user/main');
+
+  var user = req.session.user;
+   if(!user) {
+    req.flash('login', 'Not logged in');
+    res.redirect('/user/login');
+  }
+  else if (user && !online[user.name]) {
+    req.flash('login', 'Login Expired');
+    delete req.session.user;
+    res.redirect('/user/login')
+  }
+  else if(!user.admin){
+    req.flash('main', 'User is not an Administrator.');
+    res.redirect('/user/main')
+  }
+  else{
+    //TODO: grab the form variables, test existence, redirect if failure
+
+    //TODO: 
+  }
+
 });
 
 module.exports = router;
